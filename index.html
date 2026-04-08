@@ -4,74 +4,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>电子女友聊天</title>
 <style>
-body {
-    font-family: sans-serif;
-    background: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-}
-
-#chat {
-    width: 100%;
-    max-width: 500px;
-    min-height: 400px;
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px;
-    overflow-y: auto;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    margin-bottom: 10px;
-}
-
-.msg {
-    margin: 8px 0;
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 80%;
-    word-wrap: break-word;
-}
-
-.user {
-    background: #9fe6a0;
-    align-self: flex-end;
-    text-align: right;
-}
-
-.bot {
-    background: #eee;
-    align-self: flex-start;
-}
-
-#inputContainer {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    gap: 5px;
-}
-
-#input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
-button {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    background: #4CAF50;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #45a049;
-}
+body { font-family: sans-serif; background:#f0f0f0; display:flex; flex-direction:column; align-items:center; padding:10px; }
+#chat { width:100%; max-width:500px; min-height:400px; background:#fff; border-radius:10px; padding:10px; overflow-y:auto; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:10px; }
+.msg { margin:8px 0; padding:10px; border-radius:10px; max-width:80%; word-wrap:break-word; }
+.user { background:#9fe6a0; align-self:flex-end; text-align:right; }
+.bot { background:#eee; align-self:flex-start; }
+#inputContainer { width:100%; max-width:500px; display:flex; gap:5px; }
+#input { flex:1; padding:10px; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+button { padding:10px 15px; border-radius:8px; border:none; background:#4CAF50; color:white; font-size:16px; cursor:pointer; }
+button:hover { background:#45a049; }
 </style>
 </head>
 <body>
@@ -88,7 +29,6 @@ button:hover {
 async function send(){
     let text = input.value.trim();
     if(!text) return;
-
     add(text, "user");
     
     try {
@@ -97,7 +37,6 @@ async function send(){
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({message: text})
         });
-        
         let data = await res.json();
         add(data.reply, "bot");
     } catch(err) {
@@ -108,12 +47,22 @@ async function send(){
     input.value = "";
 }
 
-function add(t, c){
+function add(t,c){
     let d = document.createElement("div");
     d.className = "msg " + c;
     d.innerText = t;
     chat.appendChild(d);
-    chat.scrollTop = chat.scrollHeight;  // 滚动到底部
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// 页面加载时拉取历史聊天
+window.onload = async function(){
+    try {
+        // 调用 /chat-history 接口可以扩展，这里暂不做，直接前端只显示新消息
+        // 永久记录由后端数据库维护
+    } catch(e){
+        console.error(e);
+    }
 }
 </script>
 
