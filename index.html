@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family:sans-serif; }
+.msg { margin:10px; padding:10px; border-radius:10px; }
+.user { background:#9fe6a0; text-align:right; }
+.bot { background:#eee; }
+</style>
+</head>
+<body>
+
+<div id="chat"></div>
+
+<input id="input">
+<button onclick="send()">发送</button>
+
+<script>
+async function send(){
+    let text = input.value;
+    add(text,"user");
+
+    let res = await fetch("/chat",{
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({message:text})
+    });
+
+    let data = await res.json();
+    add(data.reply,"bot");
+
+    input.value="";
+}
+
+function add(t,c){
+    let d=document.createElement("div");
+    d.className="msg "+c;
+    d.innerText=t;
+    chat.appendChild(d);
+}
+</script>
+
+</body>
+</html>
