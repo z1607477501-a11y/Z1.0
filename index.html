@@ -38,6 +38,7 @@ function add(t,c){
     d.className="msg "+c;
     d.innerText=t;
     chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;  // 滚动到底部
 }
 </script>
 
