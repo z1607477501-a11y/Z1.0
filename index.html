@@ -2,41 +2,116 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>电子女友聊天</title>
 <style>
-body { font-family:sans-serif; }
-.msg { margin:10px; padding:10px; border-radius:10px; }
-.user { background:#9fe6a0; text-align:right; }
-.bot { background:#eee; }
+body {
+    font-family: sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+#chat {
+    width: 100%;
+    max-width: 500px;
+    min-height: 400px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    overflow-y: auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+.msg {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user {
+    background: #9fe6a0;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.bot {
+    background: #eee;
+    align-self: flex-start;
+}
+
+#inputContainer {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    gap: 5px;
+}
+
+#input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #45a049;
+}
 </style>
 </head>
 <body>
 
+<h2>电子女友聊天</h2>
 <div id="chat"></div>
 
-<input id="input">
-<button onclick="send()">发送</button>
+<div id="inputContainer">
+    <input id="input" placeholder="输入你的消息..." onkeydown="if(event.key==='Enter') send()">
+    <button onclick="send()">发送</button>
+</div>
 
 <script>
 async function send(){
-    let text = input.value;
-    add(text,"user");
+    let text = input.value.trim();
+    if(!text) return;
 
-    let res = await fetch("/chat",{
-        method:"POST",
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({message:text})
-    });
+    add(text, "user");
+    
+    try {
+        let res = await fetch("/chat", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: text})
+        });
+        
+        let data = await res.json();
+        add(data.reply, "bot");
+    } catch(err) {
+        add("网络或服务器错误，请稍后再试", "bot");
+        console.error(err);
+    }
 
-    let data = await res.json();
-    add(data.reply,"bot");
-
-    input.value="";
+    input.value = "";
 }
 
-function add(t,c){
-    let d=document.createElement("div");
-    d.className="msg "+c;
-    d.innerText=t;
+function add(t, c){
+    let d = document.createElement("div");
+    d.className = "msg " + c;
+    d.innerText = t;
     chat.appendChild(d);
     chat.scrollTop = chat.scrollHeight;  // 滚动到底部
 }
